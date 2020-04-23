@@ -1,5 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
+
+import styled from "styled-components/macro";
 import { useStoreState, useStoreActions } from "easy-peasy";
+
+const PlaybackItems = styled.div`
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  cursor: pointer;
+  user-select: none;
+  color: ${(props) => props.theme.colors.text};
+`;
+
+const PlaybackItem = styled.div`
+  color: ${(props) => props.theme.colors.text};
+  background-color: ${(props) => props.theme.colors.background};
+  height: 50px;
+  width: 200px;
+  cursor: pointer;
+  user-select: none;
+`;
 
 const playbackItemsArray = [
   {
@@ -8,7 +28,8 @@ const playbackItemsArray = [
   },
   {
     title: "Track 2",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    url:
+      "http://hwcdn.libsyn.com/p/5/f/d/5fd53827332d6803/p1462.mp3?c_id=70803698&cs_id=70803698&expiration=1587691222&hwt=5623e18e4869a43d3b0ec37ce564e1fa",
   },
   {
     title: "Track 3",
@@ -68,21 +89,67 @@ const playbackItemsArray = [
   },
 ];
 
+const light = {
+  text: "#000",
+};
+
+const dark = {
+  text: "#eee",
+};
+
 function UpdateURL() {
   const updateUrl = useStoreActions((actions) => actions.player.updateUrl);
+  const randomString = useStoreState((store) => store.player.randomString);
+  const randomInt = useStoreState((store) => store.player.randomInt);
+  const updateRandomString = useStoreActions(
+    (actions) => actions.player.updateString
+  );
+  const updateRandomInt = useStoreActions(
+    (actions) => actions.player.updateInt
+  );
+  const theme = useStoreState((store) => store.settings.theme);
+  const updateTheme = useStoreActions(
+    (actions) => actions.settings.updateTheme
+  );
+  const [cooldown, setCooldown] = useState(false);
+
+  function handleUpdateUrl(url) {
+    if (!cooldown) {
+      setCooldown(true);
+      updateUrl(url);
+      setTimeout(() => {
+        setCooldown(false);
+      }, 1750);
+    }
+  }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        userSelect: "none",
-        cursor: "pointer",
-      }}
-    >
-      {playbackItemsArray.map((item, index) => (
-        <div onClick={() => updateUrl(item.url)}>{item.title}</div>
-      ))}
+    <div>
+      <div>
+        {randomString}
+        <button onClick={() => updateRandomString("hello")}>
+          Update string
+        </button>
+      </div>
+      <div>
+        <button onClick={() => updateTheme(theme === light ? dark : light)}>
+          Update Theme
+        </button>
+      </div>
+      <div>
+        {randomInt}
+        <button onClick={() => updateRandomInt(randomInt + 1)}>
+          Update string
+        </button>
+      </div>
+
+      <PlaybackItems>
+        {playbackItemsArray.map((item, index) => (
+          <PlaybackItem onClick={() => handleUpdateUrl(item.url)}>
+            {item.title}
+          </PlaybackItem>
+        ))}
+      </PlaybackItems>
     </div>
   );
 }
