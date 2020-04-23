@@ -10,7 +10,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "react-use-audio-player": "0.0.15",
+    "react-use-audio-player": "0.0.16",
     "react-use-system-theme": "^1.1.1",
     "styled-components": "^5.1.0",
     "use-dark-mode": "^2.3.1"
